@@ -34,6 +34,7 @@
 		<spotless.version>2.43.0</spotless.version>
 		<jwt.version>0.9.1</jwt.version>
 		<javax.xml.bind.version>2.3.1</javax.xml.bind.version>
+		<springdoc.version>2.8.9</springdoc.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -55,6 +56,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -85,6 +90,12 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 		<dependency>

@@ -18,17 +18,21 @@ import com.moviehub.moviehub.dto.response.UserInfoResponse;
 import com.moviehub.moviehub.security.services.UserDetailsImpl;
 import com.moviehub.moviehub.service.AuthService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "API quản lý xác thực và authorization")
 @RequiredArgsConstructor
 public class AuthController extends BaseController {
 
     private final AuthService authService;
 
+    @Operation(summary = "Đăng nhập", description = "API đăng nhập cho người dùng")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<JwtResponse>> authenticateUser(
             @Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
@@ -37,6 +41,7 @@ public class AuthController extends BaseController {
         return createSuccessResponse("Đăng nhập thành công!", jwtResponse, request);
     }
 
+    @Operation(summary = "Đăng ký", description = "API đăng ký cho người dùng")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserInfoResponse>> registerUser(
             @Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
@@ -45,6 +50,7 @@ public class AuthController extends BaseController {
         return createCreatedResponse("Đăng ký tài khoản thành công!", userInfo, request);
     }
 
+    @Operation(summary = "Lấy thông tin người dùng", description = "API lấy thông tin người dùng")
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<UserInfoResponse>> getUserProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
@@ -53,6 +59,7 @@ public class AuthController extends BaseController {
         return createSuccessResponse("Lấy thông tin người dùng thành công", userInfo, request);
     }
 
+    @Operation(summary = "Đổi mật khẩu", description = "API đổi mật khẩu cho người dùng")
     @PutMapping("/change-password")
     public ResponseEntity<ApiResponse<Object>> changePassword(
             @Valid @RequestBody ChangePasswordRequest changePasswordRequest,

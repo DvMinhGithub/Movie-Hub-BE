@@ -13,16 +13,20 @@ import com.moviehub.moviehub.dto.response.UserInfoResponse;
 import com.moviehub.moviehub.security.services.UserDetailsImpl;
 import com.moviehub.moviehub.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "User", description = "API quản lý người dùng")
 @RequiredArgsConstructor
 public class UserController extends BaseController {
     private final UserService userService;
 
+    @Operation(summary = "Cập nhật thông tin cá nhân", description = "API cập nhật thông tin cá nhân cho người dùng")
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<UserInfoResponse>> updateProfile(
             @Valid @RequestBody UpdateProfileRequest updateProfileRequest,
