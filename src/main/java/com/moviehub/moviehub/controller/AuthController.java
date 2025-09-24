@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moviehub.moviehub.dto.request.ChangePasswordRequest;
 import com.moviehub.moviehub.dto.request.LoginRequest;
 import com.moviehub.moviehub.dto.request.RegisterRequest;
+import com.moviehub.moviehub.dto.request.UpdateProfileRequest;
 import com.moviehub.moviehub.dto.response.ApiResponse;
 import com.moviehub.moviehub.dto.response.JwtResponse;
 import com.moviehub.moviehub.dto.response.UserInfoResponse;
 import com.moviehub.moviehub.security.services.UserDetailsImpl;
 import com.moviehub.moviehub.service.AuthService;
+import com.moviehub.moviehub.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,9 +28,11 @@ import jakarta.validation.Valid;
 public class AuthController extends BaseController {
 
     private final AuthService authService;
+    private final UserService userService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -63,5 +67,15 @@ public class AuthController extends BaseController {
 
         authService.changePassword(userDetails.getId(), changePasswordRequest);
         return createSuccessResponse("Đổi mật khẩu thành công!", null, request);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<UserInfoResponse>> updateProfile(
+            @Valid @RequestBody UpdateProfileRequest updateProfileRequest,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            HttpServletRequest request) {
+
+        UserInfoResponse userInfo = userService.updateProfile(userDetails.getId(), updateProfileRequest);
+        return createSuccessResponse("Cập nhật thông tin cá nhân thành công!", userInfo, request);
     }
 }

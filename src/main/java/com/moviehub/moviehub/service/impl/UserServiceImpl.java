@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.moviehub.moviehub.dto.request.UpdateProfileRequest;
 import com.moviehub.moviehub.dto.response.UserInfoResponse;
 import com.moviehub.moviehub.exception.ResourceNotFoundException;
 import com.moviehub.moviehub.mapper.UserMapper;
@@ -53,22 +54,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, User updatedUser) {
-        User existingUser = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại với ID: " + userId));
-
-        existingUser.setFullName(updatedUser.getFullName());
-        existingUser.setPhone(updatedUser.getPhone());
-
-        return userRepository.save(existingUser);
-    }
-
-    @Override
     public void deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("Người dùng không tồn tại với ID: " + userId);
         }
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    @Transactional
+    public UserInfoResponse updateProfile(Long userId, UpdateProfileRequest request) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại với ID: " + userId));
+
+        user.setFullName(request.getFullName());
+        user.setPhone(request.getPhone());
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserInfoResponse(savedUser);
     }
 }
