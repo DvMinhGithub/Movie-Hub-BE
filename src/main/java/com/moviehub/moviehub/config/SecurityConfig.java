@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -51,14 +51,45 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/login", "/api/auth/register")
+                .authorizeHttpRequests(auth -> auth
+                        // Authentication endpoints - public
+                        .requestMatchers("/api/auth/login", "/api/auth/register")
                         .permitAll()
+
+                        // Movie GET endpoints - public read access
+                        .requestMatchers(
+                                "GET", "/api/movies",
+                                "GET", "/api/movies/*",
+                                "GET", "/api/movies/search",
+                                "GET", "/api/movies/now-showing",
+                                "GET", "/api/movies/top-rated")
+                        .permitAll()
+
+                        // Movie POST endpoints - require ADMIN or MANAGER role
+                        .requestMatchers("POST", "/api/movies")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+
+                        // Movie PUT endpoints - require ADMIN or MANAGER role
+                        .requestMatchers("PUT", "/api/movies/*")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+
+                        // Movie DELETE endpoints - require ADMIN role only
+                        .requestMatchers("DELETE", "/api/movies/*")
+                        .hasAuthority("ADMIN")
+
+                        // Swagger documentation - public
                         .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html/**", "/v3/api-docs/**")
                         .permitAll()
+
+                        // Public endpoints
                         .requestMatchers("/api/public/**")
                         .permitAll()
+
+                        // Actuator endpoints
                         .requestMatchers("/actuator/**")
                         .permitAll()
+
+                        // All other requests require authentication
                         .anyRequest()
                         .authenticated());
 
