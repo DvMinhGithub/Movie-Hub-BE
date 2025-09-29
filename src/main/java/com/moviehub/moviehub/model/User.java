@@ -18,6 +18,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,25 +41,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 50)
-    @Email
-    @Column(unique = true)
+    @NotBlank(message = "Email không được để trống")
+    @Size(max = 50, message = "Email không được quá 50 ký tự")
+    @Email(message = "Email không đúng định dạng")
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank
-    @Size(max = 120)
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 6, max = 120, message = "Mật khẩu phải từ 6-120 ký tự")
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "Họ tên không được để trống")
+    @Size(min = 2, max = 100, message = "Họ tên phải từ 2-100 ký tự")
+    @Pattern(regexp = "^[\\p{L}\\s]+$", message = "Họ tên chỉ được chứa chữ cái và khoảng trắng")
+    @Column(nullable = false)
     private String fullName;
 
-    @Size(max = 15)
+    @Size(max = 15, message = "Số điện thoại không được quá 15 ký tự")
+    @Pattern(regexp = "^[0-9+\\-\\s]*$", message = "Số điện thoại không đúng định dạng")
     private String phone;
 
+    @NotNull(message = "Vai trò không được để trống")
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private ERole role = ERole.USER;
 
     @CreationTimestamp

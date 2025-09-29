@@ -2,6 +2,7 @@ package com.moviehub.moviehub.service;
 
 import java.util.Optional;
 
+import com.moviehub.moviehub.dto.request.UpdateProfileRequest;
 import com.moviehub.moviehub.dto.response.UserInfoResponse;
 import com.moviehub.moviehub.model.User;
 
@@ -17,7 +18,7 @@ public interface UserService {
 
     UserInfoResponse convertToUserInfoResponse(User user);
 
-    User updateUser(Long userId, User updatedUser);
+    UserInfoResponse updateUser(Long userId, UpdateProfileRequest request);
 
     void deleteUser(Long userId);
 }
